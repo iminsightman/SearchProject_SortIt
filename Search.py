@@ -81,7 +81,7 @@ class Search:
         return None
 
 
-    def dfs_limited(prb: Problem, depth: int) -> State:
+  def dfs_limited(prb: Problem, depth: int) -> State:
         stack = []
         state = prb.initState
         stack.append(state)
