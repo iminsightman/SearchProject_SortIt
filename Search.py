@@ -99,3 +99,30 @@ class Search:
                     heapq.heappush(queue, PrioritizedItem(c.g_n+prb.heuristc(c), c))
         return None
 
+
+  def dfs_limited(prb: Problem, depth: int) -> State:
+        stack = []
+        state = prb.initState
+        stack.append(state)
+        visited = set()
+        visited.add(state.__hash__())
+        while len(stack) > 0:
+            state = stack.pop()
+            if prb.is_goal(state):
+                return state
+            if state.g_n < depth:
+                neighbors = prb.successor(state)
+                for c in neighbors:
+                    if c.__hash__() not in visited:
+                        visited.add(c.__hash__())
+                        stack.append(c)
+        return None
+
+     def ids(prb: Problem) -> Solution:
+            start_time = datetime.now()
+            depth = 0
+            while True:
+                result = dfs_limited(prb, depth)
+                if result is not None:
+                    return Solution(result, prb, start_time)
+                depth += 1
