@@ -7,7 +7,7 @@ from typing import Any
 
 @dataclass(order=True)
 class PrioritizedItem:
-    priority: int
+    priority: float
     item: Any=field(compare=False)
 
 class Search:
@@ -78,5 +78,24 @@ class Search:
                     if prb.is_goal(c):
                         return Solution(c, prb, start_time)
                     heapq.heappush(queue, PrioritizedItem(c.g_n, c))
+        return None
+    
+    @staticmethod
+    def a_star(prb: Problem) -> Solution:
+        start_time = datetime.now()
+        queue = []
+        state = prb.initState
+        visited = set()
+        heapq.heappush(queue, PrioritizedItem(state.g_n+prb.heuristc(state), state))
+        visited.add(state.__hash__())
+        while len(queue) > 0:
+            state = heapq.heappop(queue).item
+            neighbors = prb.successor(state)
+            for c in neighbors:
+                if c.__hash__() not in visited:
+                    visited.add(c.__hash__())
+                    if prb.is_goal(c):
+                        return Solution(c, prb, start_time)
+                    heapq.heappush(queue, PrioritizedItem(c.g_n+prb.heuristc(c), c))
         return None
 

@@ -33,6 +33,35 @@ class Problem:
                     child.append(s)
         return child
 
+    def heuristc(self, state: State) -> float:
+        h_hat = 0
+        h = 0
+        for pipe in state.pipes:
+            if pipe.is_empty():
+                continue
+            sorted_idx = 0
+            for i in range(len(pipe.stack)):
+                if pipe.stack[i] == pipe.stack[0]:
+                    sorted_idx = i
+                else:
+                    break
+            sorted = pipe.stack[:sorted_idx+1]
+            unsorted = pipe.stack[sorted_idx+1:]
+            unsorted_inversions = 0
+            for i in range(len(unsorted) - 1):
+                for j in range(i + 1, len(unsorted)):
+                    if unsorted[i] != unsorted[j]:
+                        unsorted_inversions += 1
+            
+            #h += len(unsorted)
+            #h += (1-(len(sorted)/pipe.limit))
+            # have bad is the unsorted part + have far is sorted part from being completed
+            h += unsorted_inversions + (pipe.limit - len(sorted))
+            #h += unsorted_inversions
+            #h_hat += len(sorted)
+        #return sum(map(lambda pipe: len(pipe.stack), state.pipes))-h_hat
+        return h
+    
     @staticmethod
     def print_state(state: State):
         for i in state.pipes:
@@ -47,14 +76,7 @@ class Problem:
         return out
 
     def get_cost_from_change(self, state: State, pipe_src_ind: int) -> int:
-        if state.pipes[pipe_src_ind].stack[-1] == 'red':
-            return state.g_n + self.path_cost[0]
-        elif state.pipes[pipe_src_ind].stack[-1] == 'blue':
-            return state.g_n + self.path_cost[1]
-        elif state.pipes[pipe_src_ind].stack[-1] == 'green':
-            return state.g_n + self.path_cost[2]
-        elif state.pipes[pipe_src_ind].stack[-1] == 'yellow':
-            return state.g_n + self.path_cost[3]
+        return state.g_n + 1
 
     def set_path_cost(self, cost: list):
         self.path_cost = cost

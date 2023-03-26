@@ -18,6 +18,7 @@ class Solution:
         while state is not None:
             queue.insert(0, state)
             state = state.parent
+        n_actions = len(queue)
         print('Init State')
         self.problem.print_state(queue[0])
         with open('.\\gui\\AI-GUI_Data\\StreamingAssets\\Test Input.txt', 'w') as file:
@@ -34,6 +35,7 @@ class Solution:
         print('Solution State')
         self.problem.print_state(self.state)
         print('duration = ' + str(self.duration))
+        print('n actions =', n_actions)
         actions += 'P' + str(self.state.prev_action[0] + 1) + ',' + 'p' + str(self.state.prev_action[1] + 1) + '\n'
         with open('.\\gui\\AI-GUI_Data\\StreamingAssets\\Test Input.txt', 'a') as file:
             file.write(actions)
