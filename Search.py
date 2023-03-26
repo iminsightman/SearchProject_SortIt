@@ -1,7 +1,14 @@
 from Solution import Solution
 from Problem import Problem
 from datetime import datetime
+import heapq
+from dataclasses import dataclass, field
+from typing import Any
 
+@dataclass(order=True)
+class PrioritizedItem:
+    priority: int
+    item: Any=field(compare=False)
 
 class Search:
     @staticmethod
@@ -19,8 +26,9 @@ class Search:
                     return Solution(c, prb, start_time)
                 queue.append(c)
         return None
-
-   def dfs(prb: Problem) -> Solution:
+    
+    @staticmethod
+    def dfs(prb: Problem) -> Solution:
         start_time = datetime.now()
         stack = []
         state = prb.initState
@@ -34,6 +42,7 @@ class Search:
                 stack.append(c)
         return None
 
+    @staticmethod
     def dfs1(prb: Problem) -> Solution:
         start_time = datetime.now()
         stack = []
@@ -52,22 +61,22 @@ class Search:
                     stack.append(c)
         return None
 
-
+    @staticmethod
     def ucs(prb: Problem) -> Solution:
         start_time = datetime.now()
         queue = []
         state = prb.initState
         visited = set()
-        heapq.heappush(queue, (state.g_n, state))
+        heapq.heappush(queue, PrioritizedItem(state.g_n, state))
         visited.add(state.__hash__())
         while len(queue) > 0:
-            _, state = heapq.heappop(queue)
-            if prb.is_goal(state):
-                return Solution(state, prb, start_time)
+            state = heapq.heappop(queue).item
             neighbors = prb.successor(state)
             for c in neighbors:
                 if c.__hash__() not in visited:
                     visited.add(c.__hash__())
-                    heapq.heappush(queue, (c.g_n, c))
+                    if prb.is_goal(c):
+                        return Solution(c, prb, start_time)
+                    heapq.heappush(queue, PrioritizedItem(c.g_n, c))
         return None
 
