@@ -18,3 +18,6 @@ class State:
         for i in hash_strings:
             hash_string += i + '###'
         return hash_string
+
+    def g_n(self):
+        return self.g_n
