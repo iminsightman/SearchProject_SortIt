@@ -137,7 +137,7 @@ class Search:
             return solution
 
 
-    def rbfs1(state, f_limit, visited, prb, start_time):
+    def rbfs1( prb:Problem,state, f_limit, visited, start_time) -> Solution:
 
         if prb.is_goal(state):
             return Solution(state, prb, start_time), 0
@@ -158,9 +158,9 @@ class Search:
             if len(heap) > 0:
                 alternative_f_n, alternative = heapq.heappop(heap)
                 heapq.heappush(heap, (alternative_f_n, alternative))
-                result, best.f_n = rbfs1(best, min(f_limit, alternative_f_n), visited, prb, start_time)
+                result, best.f_n = rbfs1(prb,best, min(f_limit, alternative_f_n), visited,  start_time)
             else:
-                result, best.f_n = rbfs1(best, f_limit, visited, prb, start_time)
+                result, best.f_n = rbfs1(prb,best, f_limit, visited,  start_time)
             if result:
                 return result, 0
             heapq.heappush(heap, (best.f_n, best))
