@@ -138,7 +138,6 @@ class Search:
 
 
     def rbfs1( prb:Problem,state, f_limit, visited, start_time) -> Solution:
-
         if prb.is_goal(state):
             return Solution(state, prb, start_time), 0
         successors = prb.successor(state)
@@ -164,3 +163,37 @@ class Search:
             if result:
                 return result, 0
             heapq.heappush(heap, (best.f_n, best))
+
+    def ida_star(prb: Problem) -> Solution:
+        start_time = datetime.now()
+        state = prb.initState
+        f_limit = prb.heuristic(state)
+        while True:
+            visited = set()
+            visited.add(state.__hash__())
+            result, f_limit = ida_star1(prb, state, f_limit, visited,  start_time)
+            if result:
+                return result
+
+    def ida_star1(prb:Problem ,state, f_limit, visited,  start_time) -> Solution:
+        if prb.is_goal(state):
+            return Solution(state, prb, start_time), 0
+        successors = prb.successor(state)
+        if not successors:
+            return None, float('inf')
+        min_f_n = float('inf')
+        for c in successors:
+            if c.__hash__() in visited:
+                continue
+            visited.add(c.__hash__())
+            c.f_n = prb.g_n(state, c) + prb.heuristic(c)
+            if c.f_n > f_limit:
+                min_f_n = min(min_f_n, c.f_n)
+                continue
+            result, c.f_n = ida_star1(prb , c, f_limit, visited, start_time)
+            if result:
+                return result, 0
+            min_f_n = min(min_f_n, c.f_n)
+        return None, min_f_n
+
+
